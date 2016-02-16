@@ -203,9 +203,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\OptionPickerMigrations\201602160000059_InitialCreate.cs" />
-    <Compile Include="Migrations\OptionPickerMigrations\201602160000059_InitialCreate.Designer.cs">
-      <DependentUpon>201602160000059_InitialCreate.cs</DependentUpon>
+    <Compile Include="Migrations\OptionPickerMigrations\201602160035160_InitialCreate.cs" />
+    <Compile Include="Migrations\OptionPickerMigrations\201602160035160_InitialCreate.Designer.cs">
+      <DependentUpon>201602160035160_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\OptionPickerMigrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -302,8 +302,8 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\OptionPickerMigrations\201602160000059_InitialCreate.resx">
-      <DependentUpon>201602160000059_InitialCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\OptionPickerMigrations\201602160035160_InitialCreate.resx">
+      <DependentUpon>201602160035160_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
