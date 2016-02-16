@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DiplomaDataModel.OptionPicker
 {
-    class YearTerm
+    public class YearTerm
     {
         [Key]
         public int YearTermId { get; set; }
