@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -37,6 +35,14 @@ namespace OptionsWebSite.Controllers
             {
                 return HttpNotFound();
             }
+            ApplicationUser user = System.Web.HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(System.Web.HttpContext.Current.User.Identity.GetUserId());
+            ViewBag.FirstChoiceOptionId = new SelectList(db.Options, "OptionId", "Title");
+            ViewBag.FourthChoiceOptionId = new SelectList(db.Options, "OptionId", "Title");
+            ViewBag.SecondChoiceOptionId = new SelectList(db.Options, "OptionId", "Title");
+            ViewBag.ThirdChoiceOptionId = new SelectList(db.Options, "OptionId", "Title");
+            ViewBag.YearTermId = new SelectList(db.YearTerms, "YearTermId", "YearTermId");
+            ViewBag.StudentId = user.UserName;
+            //ViewBag.YearTerm = termAsString;
             return View(choice);
         }
 
@@ -81,16 +87,29 @@ namespace OptionsWebSite.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "ChoiceId,YearTermId,StudentId,StudentFirstName,StudentLastName,FirstChoiceOptionId,SecondChoiceOptionId,ThirdChoiceOptionId,FourthChoiceOptionId,SelectionDate")] Choice choice)
         {
+            ApplicationUser user = System.Web.HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(System.Web.HttpContext.Current.User.Identity.GetUserId());
+            // get year term id
+            var year = from y in db.YearTerms
+                       where y.IsDefault.Equals(true)
+                       select y;
+            var t = year.FirstOrDefault();
+            var yearTerm = t.YearTermId;
+            choice.YearTermId = yearTerm;
+
+            var isDistinct = from a in db.Choices
+                             where a.YearTermId.Equals(choice.YearTermId)
+                             where a.StudentId.Equals(choice.StudentId)
+                             select a;
+            var any = from b in db.Choices
+                      select b;
+
+            if ((!isDistinct.Any()) && (any.Any()))
+            {
+                ModelState.AddModelError(string.Empty, "You can only choose options once per term.");
+            }
+
             if (ModelState.IsValid)
             {
-                // get year term id
-                var year = from y in db.YearTerms
-                           where y.IsDefault.Equals(true)
-                           select y;
-                var t = year.FirstOrDefault();
-                var yearTerm = t.YearTermId;
-                choice.YearTermId = yearTerm;
-
                 db.Choices.Add(choice);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -121,6 +140,7 @@ namespace OptionsWebSite.Controllers
             ViewBag.ThirdChoiceOptionId = new SelectList(db.Options, "OptionId", "Title", choice.ThirdChoiceOptionId);
             ViewBag.YearTermId = new SelectList(db.YearTerms, "YearTermId", "YearTermId", choice.YearTermId);
             ViewBag.YearTerm = termAsString;
+            ViewBag.StudentId = user.UserName;
             return View(choice);
         }
 
@@ -136,11 +156,33 @@ namespace OptionsWebSite.Controllers
             {
                 return HttpNotFound();
             }
+
+            var query = from b in db.YearTerms
+                        where b.IsDefault.Equals(true)
+                        select b;
+            var term = query.FirstOrDefault();
+            var termAsString = "";
+
+            if (term.Term == 10)
+            {
+                termAsString = term.Year.ToString() + " Winter";
+            }
+            else if (term.Term == 20)
+            {
+                termAsString = term.Year.ToString() + " Spring/Summer";
+            }
+            else if (term.Term == 30)
+            {
+                termAsString = term.Year.ToString() + " Fall";
+            }
+            ApplicationUser user = System.Web.HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(System.Web.HttpContext.Current.User.Identity.GetUserId());
             ViewBag.FirstChoiceOptionId = new SelectList(db.Options, "OptionId", "Title", choice.FirstChoiceOptionId);
             ViewBag.FourthChoiceOptionId = new SelectList(db.Options, "OptionId", "Title", choice.FourthChoiceOptionId);
             ViewBag.SecondChoiceOptionId = new SelectList(db.Options, "OptionId", "Title", choice.SecondChoiceOptionId);
             ViewBag.ThirdChoiceOptionId = new SelectList(db.Options, "OptionId", "Title", choice.ThirdChoiceOptionId);
             ViewBag.YearTermId = new SelectList(db.YearTerms, "YearTermId", "YearTermId", choice.YearTermId);
+            ViewBag.StudentId = user.UserName;
+            ViewBag.YearTerm = termAsString;
             return View(choice);
         }
 
