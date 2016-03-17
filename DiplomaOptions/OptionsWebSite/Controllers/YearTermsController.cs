@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using DiplomaDataModel.DataContext;
 using DiplomaDataModel.OptionPicker;
+using System.Diagnostics;
 
 namespace OptionsWebSite.Controllers
 {
@@ -84,8 +85,35 @@ namespace OptionsWebSite.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(yearTerm).State = EntityState.Modified;
-                db.SaveChanges();
+                List<YearTerm> query = (from b in db.YearTerms
+                                        where b.IsDefault.Equals(true)
+                                        select b).ToList();
+
+                query.Select(c => { c.IsDefault = false; return c; }).ToList();
+                try {
+                    db.Entry(yearTerm).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+                catch (Exception) { }
+
+                //List<YearTerm> queryAll = (from d in db.YearTerms
+                //                           select d).ToList();
+                //int count = 0;
+                //foreach (YearTerm y in queryAll)
+                //{
+                //    if (y.IsDefault == true)
+                //    {
+                //        count++;
+                //    }
+                //}
+                //Debug.Print("count value: " + count);
+                //if (count == 0)
+                //{
+                //    queryAll[0].IsDefault = true;
+                //}
+
+                //db.Entry(yearTerm).State = EntityState.Modified;
+                //db.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(yearTerm);
