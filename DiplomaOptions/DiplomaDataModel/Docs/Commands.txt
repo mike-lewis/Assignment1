@@ -1,0 +1,15 @@
+﻿Option Picker Migrations
+
+enable-migrations -ContextProjectName DiplomaDataModel -ContextTypeName OptionPickerContext -MigrationsDirectory Migrations\OptionPickerMigrations -ProjectName OptionsWebSite
+
+add-migration -ConfigurationTypeName OptionsWebSite.Migrations.OptionPickerMigrations.Configuration "InitialCreate"
+
+update-database -ConfigurationTypeName OptionsWebSite.Migrations.OptionPickerMigrations.Configuration
+
+Identity Migrations
+
+enable-migrations -ContextProjectName DiplomaDataModel -ContextTypeName ApplicationDbContext -MigrationsDirectory Migrations\ApplicationDbMigrations -ProjectName OptionsWebSite
+
+add-migration -ConfigurationTypeName OptionsWebSite.Migrations.ApplicationDbMigrations.Configuration "InitialCreate"
+
+update-database -ConfigurationTypeName OptionsWebSite.Migrations.ApplicationDbMigrations.Configuration
